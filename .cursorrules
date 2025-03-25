@@ -1,0 +1,42 @@
+{
+    "python": {
+        "formatter": "black",
+        "lineLength": 88,
+        "linting": {
+            "enabled": true,
+            "pylint": true,
+            "flake8": true,
+            "mypy": true
+        },
+        "testing": {
+            "framework": "pytest",
+            "coverage": {
+                "enabled": true,
+                "minCoverage": 80
+            }
+        },
+        "documentation": {
+            "requireDocstrings": true,
+            "requireTypeHints": true
+        }
+    },
+    "editor": {
+        "formatOnSave": true,
+        "rulers": [88],
+        "tabSize": 4,
+        "insertSpaces": true,
+        "trimTrailingWhitespace": true,
+        "insertFinalNewline": true
+    },
+    "git": {
+        "commitMessageFormat": "conventional",
+        "branchNaming": {
+            "feature": "feature/*",
+            "bugfix": "bugfix/*"
+        }
+    },
+    "security": {
+        "scanOnSave": true,
+        "checkDependencies": true
+    }
+} 
