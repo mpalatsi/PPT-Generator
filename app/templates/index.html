@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPT Generator - Create Presentations from Web Screenshots</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>PPT Generator</h1>
+            <p class="subtitle">Create beautiful presentations from web screenshots</p>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="hero">
+                <h2>Generate PowerPoint Presentations</h2>
+                <p>Add multiple URLs to create a presentation with screenshots from each webpage.</p>
+            </section>
+
+            <section class="form-section">
+                <form id="urlForm" class="form">
+                    <div id="urlInputs" class="url-inputs">
+                        <div class="url-input-group">
+                            <div class="form-group">
+                                <label for="url-1">URL 1:</label>
+                                <div class="url-input-container">
+                                    <input 
+                                        type="url" 
+                                        id="url-1"
+                                        name="urls" 
+                                        placeholder="https://example.com"
+                                        required
+                                        class="form-input"
+                                    >
+                                    <div class="url-preview" id="preview-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="addUrlBtn" class="btn-secondary">
+                            <i class="fas fa-plus icon"></i>
+                            Add Another URL
+                        </button>
+                    </div>
+
+                    <div class="slide-counter">
+                        Number of slides: <span id="slideCount">1</span>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-file-powerpoint icon"></i>
+                        Generate Presentation
+                    </button>
+                </form>
+            </section>
+
+            <section class="features">
+                <h2>Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-camera feature-icon"></i>
+                        <h3>Smart Screenshot Capture</h3>
+                        <p>Automatically captures full-page screenshots of any webpage</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-paint-brush feature-icon"></i>
+                        <h3>Clean Layout</h3>
+                        <p>Professional PowerPoint layout with consistent formatting</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-sliders-h feature-icon"></i>
+                        <h3>Customizable Options</h3>
+                        <p>Add multiple URLs to create presentations with multiple slides</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Move the modal outside the form -->
+    <div class="modal" id="cropperModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="cropper-container">
+                <img id="cropperImage" src="" alt="Image to crop">
+            </div>
+            <div class="cropper-controls">
+                <button type="button" class="btn-secondary" id="rotateLeft">↶ Rotate Left</button>
+                <button type="button" class="btn-secondary" id="rotateRight">↷ Rotate Right</button>
+                <button type="button" class="btn-primary" id="cropDone">Apply Crop</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 PPT Generator. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+</body>
+</html> 
+</html> 

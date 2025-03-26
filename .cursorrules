@@ -38,5 +38,17 @@
     "security": {
         "scanOnSave": true,
         "checkDependencies": true
+    },
+    "design": {
+        "colorPalette": {
+            "primary": "#2e1a47",
+            "secondary": "#a6a3e0",
+            "background": "#fff",
+            "usage": {
+                "primary": "Main headings, important UI elements, primary actions",
+                "secondary": "Secondary elements, accents, interactive components",
+                "background": "Main background, cards, containers"
+            }
+        }
     }
 } 
