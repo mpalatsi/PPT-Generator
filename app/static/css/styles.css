@@ -103,7 +103,8 @@ body {
     max-width: 800px;
     margin: 0 auto var(--spacing-xl);
     padding: var(--spacing-lg);
-    background-color: var(--color-background);
+    background-color: rgba(166, 163, 224, 0.05); /* Very light version of secondary color */
+    border: 1px solid rgba(166, 163, 224, 0.2);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
 }
@@ -293,11 +294,22 @@ body {
 }
 
 .url-input-group {
-    position: relative;
-    padding: var(--spacing-md);
-    background-color: #f8f9fa;
-    border-radius: var(--border-radius-md);
+    background-color: var(--color-background);
     border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    transition: all 0.2s ease;
+}
+
+.url-input-group:hover {
+    border-color: var(--color-secondary);
+    box-shadow: 0 2px 8px rgba(166, 163, 224, 0.1);
+}
+
+.url-input-group:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 12px rgba(46, 26, 71, 0.1);
 }
 
 .url-input-container {
