@@ -16,6 +16,7 @@ import time
 import logging
 from pathlib import Path
 import os
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -31,52 +32,43 @@ class ScreenshotService:
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.driver = None
         self._setup_driver()
     
     def _setup_driver(self) -> None:
         """Set up the Chrome WebDriver with appropriate options."""
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--window-size=1920,1080")
-        
         try:
-            # Get the ChromeDriver path and ensure it's the executable
-            driver_path = ChromeDriverManager().install()
-            driver_dir = os.path.dirname(driver_path)
-            driver_exe = os.path.join(driver_dir, "chromedriver.exe")
+            chrome_options = Options()
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--window-size=1920,1080")
+            chrome_options.add_argument("--start-maximized")
             
-            if not os.path.exists(driver_exe):
-                # If chromedriver.exe is not found, try to find it in the directory
-                for file in os.listdir(driver_dir):
-                    if file.lower().endswith("chromedriver.exe"):
-                        driver_exe = os.path.join(driver_dir, file)
-                        break
-                else:
-                    raise FileNotFoundError("ChromeDriver executable not found")
-            
-            service = Service(executable_path=driver_exe)
-            self.driver = webdriver.Chrome(service=service, options=chrome_options)
-            logger.info("ChromeDriver initialized successfully")
+            # Initialize ChromeDriver with automatic version detection
+            self.driver = webdriver.Chrome(
+                service=Service(ChromeDriverManager().install()),
+                options=chrome_options
+            )
+            logger.info("Chrome WebDriver initialized successfully")
         except Exception as e:
-            logger.error(f"Error setting up ChromeDriver: {str(e)}")
+            logger.error(f"Failed to initialize Chrome WebDriver: {str(e)}")
             raise
 
-    async def take_screenshot(self, url: str, output_path: str) -> None:
+    async def take_screenshot(self, url: str, output_path: str) -> str:
         """
         Take a screenshot of a webpage.
         
         Args:
-            url: The URL to capture
-            output_path: Path where to save the screenshot
+            url: The URL to screenshot
+            output_path: Where to save the screenshot
+            
+        Returns:
+            The path to the saved screenshot
         """
         try:
-            # Create a new driver instance for each screenshot
-            self._setup_driver()
-            
-            # Navigate to URL
-            logger.info(f"Navigating to URL: {url}")
+            logger.info(f"Taking screenshot of {url}")
             self.driver.get(url)
             
             # Wait for the page to load
@@ -84,28 +76,17 @@ class ScreenshotService:
                 EC.presence_of_element_located((By.TAG_NAME, "body"))
             )
             
-            # Set viewport size
-            self.driver.set_window_size(1920, 1080)
-            
-            # Wait for dynamic content
-            time.sleep(2)
+            # Additional wait for dynamic content
+            await asyncio.sleep(2)
             
             # Take screenshot
-            logger.info(f"Taking screenshot and saving to: {output_path}")
             self.driver.save_screenshot(output_path)
+            logger.info(f"Screenshot saved to {output_path}")
+            return output_path
             
-        except TimeoutException:
-            logger.error(f"Timeout while loading page: {url}")
-            raise HTTPException(status_code=500, detail="Failed to load webpage")
         except Exception as e:
             logger.error(f"Error taking screenshot: {str(e)}")
-            raise HTTPException(status_code=500, detail="Failed to capture screenshot")
-        finally:
-            # Clean up
-            try:
-                self.driver.quit()
-            except Exception as e:
-                logger.error(f"Error cleaning up driver: {str(e)}")
+            raise
     
     def capture_screenshots(self, url: str, num_slides: int) -> List[str]:
         """
@@ -156,7 +137,13 @@ class ScreenshotService:
     
     def cleanup(self) -> None:
         """Clean up resources."""
-        try:
-            self.driver.quit()
-        except Exception as e:
-            logger.error(f"Error cleaning up driver: {str(e)}") 
+        if self.driver:
+            try:
+                self.driver.quit()
+                logger.info("Chrome WebDriver closed successfully")
+            except Exception as e:
+                logger.error(f"Error closing Chrome WebDriver: {str(e)}")
+    
+    def __del__(self):
+        """Clean up the WebDriver when the service is destroyed."""
+        self.cleanup() 
